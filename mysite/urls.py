@@ -19,7 +19,10 @@ from django.urls import include, path
 from django.views.generic.base import RedirectView
 
 urlpatterns = [
-    path(route='favicon.ico', view=RedirectView.as_view(url=staticfiles_storage.url('favicon.ico'))),
-    path('polls/', include('polls.urls')),
-    path('admin/', admin.site.urls),
+    path(
+        route="favicon.ico",
+        view=RedirectView.as_view(url=staticfiles_storage.url("favicon.ico")),
+    ),
+    path("polls/", include("polls.urls")),
+    path("admin/", admin.site.urls),
 ]
