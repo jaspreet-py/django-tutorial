@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
+from django.db.models import F
 
 from .models import Question, Choice
 
@@ -46,7 +47,7 @@ def vote(request, question_id):
             },
         )
 
-    selected_choice.votes += 1
+    selected_choice.votes += F("votes") + 1
     selected_choice.save()
 
     # Returning an HTTPResponseRedirect to prevent data from being submitted
