@@ -1,34 +1,33 @@
-from django.shortcuts import get_object_or_404, render
-from django.http import HttpResponse, HttpResponseRedirect
-from django.urls import reverse
 from django.db.models import F
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render
+from django.urls import reverse
+from django.views import generic
+
+from typing import Optional
 
 from .models import Question, Choice
 
 
-def index(request):
-    latest_questions = Question.objects.order_by("-pub_date")[:5]
-    context = {
-        "latest_questions": latest_questions,
-    }
-    return render(request=request, template_name="polls/index.html", context=context)
+class IndexView(generic.ListView):
+    template_name: str = "polls/index.html"
+    context_object_name: Optional[str] = "latest_questions"
+
+    def get_queryset(self):
+        """Return the latest 5 published questions"""
+        return Question.objects.order_by("-pub_date")[:5]
 
 
-def detail(request, question_id):
+class DetailView(generic.DetailView):
     """Show voting page for the given question ID"""
-    question = get_object_or_404(klass=Question, pk=question_id)
-    context = {"question": question}
-    return render(request=request, template_name="polls/detail.html", context=context)
+    model = Question
+    template_name: str = "polls/detail.html"
 
 
-def results(request, question_id):
+class ResultsView(generic.DetailView):
     """Display results for the given question ID"""
-    question: Question = get_object_or_404(Question, pk=question_id)
-    return render(
-        request=request,
-        template_name="polls/results.html",
-        context={"question": question},
-    )
+    model = Question
+    template_name: str = "polls/results.html"
 
 
 def vote(request, question_id):
@@ -47,13 +46,13 @@ def vote(request, question_id):
             },
         )
 
-    selected_choice.votes += F("votes") + 1
+    selected_choice.votes = F("votes") + 1
     selected_choice.save()
 
     # Returning an HTTPResponseRedirect to prevent data from being submitted
     # twice in case user hits the back button
     return HttpResponseRedirect(
         redirect_to=reverse(
-            viewname="polls:results", kwargs={"question_id": question.id}
+            viewname="polls:results", kwargs={"pk": question.id}
         )
     )
