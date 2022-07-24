@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.db.models import F
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
+from django.utils import timezone
 from django.views import generic
 
 from typing import Any, Dict, Optional
@@ -15,7 +16,7 @@ class IndexView(generic.ListView):
 
     def get_queryset(self):
         """Return the latest 5 published questions"""
-        return Question.objects.order_by("-pub_date")[:5]
+        return Question.objects.filter(pub_date__lte=timezone.now())[:5]
 
 
 class DetailView(generic.DetailView):
@@ -23,6 +24,10 @@ class DetailView(generic.DetailView):
 
     model = Question
     template_name: str = "polls/detail.html"
+
+    def get_queryset(self):
+        """Exclude any questions that aren't published yet"""
+        return Question.objects.filter(pub_date__lte=timezone.now())
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
