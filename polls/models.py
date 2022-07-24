@@ -11,9 +11,9 @@ class Question(models.Model):
     def was_published_recently(self) -> bool:
         """Returns whether a question was published within the previous 24 hours"""
         return self.pub_date >= timezone.now() - datetime.timedelta(days=1)
-    
+
     question_text = models.CharField(max_length=200)
-    pub_date = models.DateTimeField(verbose_name='date published')
+    pub_date = models.DateTimeField(verbose_name="date published")
 
 
 class Choice(models.Model):

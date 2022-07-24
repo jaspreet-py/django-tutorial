@@ -23,7 +23,7 @@ urlpatterns = [
         route="favicon.ico",
         view=RedirectView.as_view(url=staticfiles_storage.url("favicon.ico")),
     ),
-    path("", RedirectView.as_view(url="polls/")) ,
+    path("", RedirectView.as_view(url="polls/")),
     path("polls/", include("polls.urls")),
     path("admin/", admin.site.urls),
 ]
