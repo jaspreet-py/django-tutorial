@@ -5,12 +5,16 @@ from django.utils import timezone
 
 # Create your models here.
 class Question(models.Model):
+    class Meta:
+        ordering = ["-pub_date"]
+
     def __str__(self) -> str:
         return self.question_text
 
     def was_published_recently(self) -> bool:
         """Returns whether a question was published within the previous 24 hours"""
-        return self.pub_date >= timezone.now() - datetime.timedelta(days=1)
+        now = timezone.now()
+        return now - datetime.timedelta(days=1) <= self.pub_date <= now
 
     question_text = models.CharField(max_length=200)
     pub_date = models.DateTimeField(verbose_name="date published")
