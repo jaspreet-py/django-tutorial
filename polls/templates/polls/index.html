@@ -1,3 +1,7 @@
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'polls/style.css' %}" />
+
 <ul>
     {% for question in latest_questions %}
         <li><a href={% url 'polls:detail' question.id %}>{{ question.question_text }}</li></a>
